@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     protected Button button = null;
 
@@ -17,23 +17,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        init();
-        onClickIntent();
-    }
-
-    protected void init() {
         button = findViewById(R.id.btn_intent);
+        button.setOnClickListener(this);
     }
 
-    protected void onClickIntent() {
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, );
-            }
-        });
+    @Override
+    public void onClick(View view) {
+        Intent intent = new Intent(MainActivity.this, CallActivity.class);
+        intent.putExtra("intent-message", "game joa joa");
+        startActivity(intent);
     }
-
-
 }
