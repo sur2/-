@@ -1,0 +1,2 @@
+rootProject.name = "CLASS-4C"
+include ':app'
