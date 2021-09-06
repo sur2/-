@@ -36,6 +36,3 @@ Intent sendIntent = new Intent();
 sendIntent.setAction(Intent.ACTION_CALL);
 startActivity(sendIntent);
 ```
-
-
-
