@@ -17,6 +17,8 @@ import android.widget.TextView;
 import com.example.class_8c.data.DataPostItem;
 import com.google.android.material.tabs.TabLayout;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -72,4 +74,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions, @NonNull @NotNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 2000 && grantResults.length > 0) {
+            TimelineFragment timelineFragment = (TimelineFragment) arrFragments[0];
+            timelineFragment.startCameraActivity();
+        }
+    }
 }

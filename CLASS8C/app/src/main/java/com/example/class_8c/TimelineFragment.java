@@ -1,13 +1,24 @@
 package com.example.class_8c;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -16,11 +27,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.class_8c.api.Api;
 import com.example.class_8c.data.DataPostItem;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -102,7 +117,44 @@ public class TimelineFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         postViewAdapter = new PostViewAdapter();
         recyclerView.setAdapter(postViewAdapter);
+
+        baseViwe.findViewById(R.id.fab_post).setOnClickListener(v -> {
+
+            int permissionCheck = ContextCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.READ_EXTERNAL_STORAGE);
+
+            if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+                startCameraActivity();
+            } else {
+                Toast.makeText(getActivity(), "권한이 없습니다.", Toast.LENGTH_SHORT).show();
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                        2000);
+            }
+        });
         return baseViwe;
+    }
+
+    public void startCameraActivity() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(cameraIntent, 1000);
+        }
+    }
+
+    /** Main(TimelineFrag) -> run Camera -> main -> Post **/
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1000 && resultCode == Activity.RESULT_OK) {
+            Log.d("onActivityResult", "Camera SUCCESS");
+
+            Intent startIntent = new Intent(getActivity(), PostActivity.class);
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            startIntent.putExtra("photo", bitmap);
+            startActivity(startIntent);
+        }
     }
 
     private void fetchAsyncPosts() {
